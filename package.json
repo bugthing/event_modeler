@@ -1,0 +1,18 @@
+{
+  "name": "event_modeler",
+  "version": "0.0.1",
+  "description": "A system to help build event models and structure code as a result",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server",
+    "build": "./node_modules/.bin/esbuild app.js --bundle --outfile=index.js"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esbuild": "^0.12.28",
+    "raphael": "^2.3.0"
+  }
+}
