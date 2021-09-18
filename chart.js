@@ -1,12 +1,14 @@
 import Raphael from 'raphael'
-
+import { v4 as uuidv4 } from 'uuid';
 
 Raphael.fn.connection = function (obj1, obj2, line, bg) {
+
     if (obj1.line && obj1.from && obj1.to) {
         line = obj1;
         obj1 = line.from;
         obj2 = line.to;
     }
+
     var bb1 = obj1.getBBox(),
         bb2 = obj2.getBBox(),
         p = [{x: bb1.x + bb1.width / 2, y: bb1.y - 1},
@@ -58,6 +60,38 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
     }
 };
 
+class EventModelElement {
+   constructor(options = {}){
+      Object.assign(this, {
+          uuid: uuidv4()
+      }, options);
+    }
+};
+
+class Interface extends EventModelElement {
+}
+
+class Command extends EventModelElement {
+}
+
+class Event extends EventModelElement {
+}
+
+class ReadModel extends EventModelElement {
+}
+
+let ui = [ new Interface, new Interface, new Interface ];
+let commands = [ new Command({ui: ui[0]}), new Command, new Command ];
+let events = [ new Event({command: commands[0]}), new Event, new Event ];
+let read_models = [ new ReadModel({event: events[0]}), new ReadModel, new ReadModel ];
+
+const model = {
+  ui: ui,
+  commands: commands,
+  events: events,
+  read_models: read_models
+}
+
 export default function () {
     var dragger = function () {
         this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
@@ -74,25 +108,71 @@ export default function () {
     },
     up = function () {
         this.animate({"fill-opacity": 0}, 500);
-    },
-    w = 600,
-    h = 800,
+    };
+
+    let w = 600, h = 800;
+
     paper = Raphael("chart",w,h);
     paper.setViewBox(0,0,w,h,true);
     paper.setSize('100%', '100%');
-    connections = [],
-    shapes = [  paper.ellipse(190, 100, 30, 20),
-                paper.rect(290, 80, 60, 40, 10),
-                paper.rect(290, 180, 60, 40, 2),
-                paper.ellipse(450, 100, 20, 20)
-            ];
-    for (var i = 0, ii = shapes.length; i < ii; i++) {
-        var color = Raphael.getColor();
-        shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
-        shapes[i].drag(move, dragger, up);
-    }
-    connections.push(paper.connection(shapes[0], shapes[1], "#fff"));
-    connections.push(paper.connection(shapes[1], shapes[2], "#fff", "#fff|5"));
-    connections.push(paper.connection(shapes[1], shapes[3], "#000", "#fff"));
+
+    //connections = [],
+    //shapes = [  paper.ellipse(190, 100, 30, 20),
+    //            paper.rect(290, 80, 60, 40, 10),
+    //            paper.rect(290, 180, 60, 40, 2),
+    //            paper.ellipse(450, 100, 20, 20)
+    //        ];
+    //for (var i = 0, ii = shapes.length; i < ii; i++) {
+    //    var color = Raphael.getColor();
+    //    shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
+    //    shapes[i].drag(move, dragger, up);
+    //}
+    //connections.push(paper.connection(shapes[0], shapes[1], "#fff"));
+    //connections.push(paper.connection(shapes[1], shapes[2], "#fff", "#fff|5"));
+    //connections.push(paper.connection(shapes[1], shapes[3], "#000", "#fff"));
+
+    const colourise = function(shape) {
+      let color = Raphael.getColor();
+      shape.attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
+    };
+   
+    const shapes = [];
+    const connections = [];
+
+    // Draw the interface elements
+    let x = 190;
+    let y = 100;
+    model.ui.forEach( (ui) => {
+      let shape = paper.ellipse(x, y, 30, 20);
+      shape.data('element', ui);
+      shapes.push(shape);
+      paper.text(x, y, ui.uuid);
+      x = x + 100;
+
+      colourise(shape);
+      shape.drag(move, dragger, up);
+    });
+
+    // Draw the command elements
+    x = 190;
+    y = 150;
+    model.commands.forEach( (command) => {
+      let shape = paper.rect(x, y, 40, 10);
+      shape.data('element', command);
+      shapes.push(shape);
+      paper.text(x, y, command.uuid);
+      x = x + 100;
+
+      colourise(shape);
+      shape.drag(move, dragger, up);
+   
+      // look in shapes see if any connect to this command (via .ui attr)..
+      shapes.forEach( (other_shape) => {
+        if (other_shape.data('element').uuid === command.ui.uuid) {
+          connections.push(paper.connection(other_shape, shape, "#fff"));
+        }
+      });
+    });
+
 };
 

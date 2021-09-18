@@ -6,13 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "http-server",
-    "build": "./node_modules/.bin/esbuild app.js --bundle --outfile=index.js"
+    "build": "./node_modules/.bin/esbuild app.js --bundle --outfile=index.js --bundle --watch"
   },
-  "type": "module",
-  "author": "",
+  "author": "Benjamin Martin",
   "license": "ISC",
   "dependencies": {
     "esbuild": "^0.12.28",
-    "raphael": "^2.3.0"
+    "raphael": "^2.3.0",
+    "uuid": "^8.3.2"
   }
 }
