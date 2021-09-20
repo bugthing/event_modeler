@@ -1,6 +1,10 @@
-import chart from './chart'
+import Chart from './chart'
+import model from './model'
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    chart();
+    const chart = new Chart(model);
+
+    const element = document.getElementById('chart');
+    chart.draw(element);
 });
 
