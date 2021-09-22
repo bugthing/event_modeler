@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server",
+    "start": "http-server -c-1",
     "build": "./node_modules/.bin/esbuild app.js --bundle --outfile=index.js --bundle --watch"
   },
   "author": "Benjamin Martin",
   "license": "ISC",
   "dependencies": {
     "esbuild": "^0.12.28",
-    "raphael": "^2.3.0",
+    "http-server": "^13.0.2",
     "uuid": "^8.3.2"
   }
 }
