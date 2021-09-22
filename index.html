@@ -3,9 +3,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" 
-        content="width=device-width, 
-        initial-scale=1.0, 
+  <meta name="viewport"
+        content="width=device-width,
+        initial-scale=1.0,
         user-scalable=no" />
 
   <title>Event Modeler</title>
@@ -16,10 +16,18 @@
 
 <body>
 
-  <div id="outerContainer">
-    <div id="container">
-      <div id="item" class='circle'> </div>
-      <div id="item2" class='circle'> </div>
+  <div id="event_model">
+    <div id="lanes_container">
+      <div class="lane" id='ui_lane'>
+        <div id="item1" class='circle'> </div>
+      </div>
+      <div class="lane" id='commands_and_read_lane'>
+        <div id="item2" class='circle'> </div>
+        <div id="item4" class='circle'> </div>
+      </div>
+      <div class="lane" id='events_lane'>
+        <div id="item3" class='circle'> </div>
+      </div>
     </div>
   </div>
 
