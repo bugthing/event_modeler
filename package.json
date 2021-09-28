@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "http-server -c-1",
+    "lint": "prettier --write --ignore-unknown .",
     "build": "./node_modules/.bin/esbuild app.js --bundle --outfile=index.js --bundle --watch"
   },
   "author": "Benjamin Martin",
@@ -14,5 +15,8 @@
     "esbuild": "^0.12.28",
     "http-server": "^13.0.2",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "prettier": "2.4.1"
   }
 }

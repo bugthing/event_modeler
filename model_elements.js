@@ -1,5 +1,4 @@
-
-import Bound from './bound'
+import Bound from "./bound";
 
 export default class ModelElements {
   constructor(model) {
@@ -7,93 +6,108 @@ export default class ModelElements {
   }
 
   draw(container) {
-    this.model.ui.forEach( (ui) => {
-      this.applyInterface(ui, container);
+    this.container = container;
+    this.bound = new Bound(container);
+
+    const all_lanes = new Set(
+      this.model.ui
+        .concat(this.model.commands, this.model.events, this.model.read_models)
+        .map((m) => m.lane)
+    );
+
+    all_lanes.forEach((l) => {
+      this.applyLane(l);
     });
 
-    this.model.commands.forEach( (cmd) => {
-      this.applyCommand(cmd, container);
+    this.model.ui.forEach((ui) => {
+      this.applyInterface(ui);
     });
 
-    this.model.events.forEach( (evt) => {
-      this.applyEvent(evt, container);
+    this.model.commands.forEach((cmd) => {
+      this.applyCommand(cmd);
     });
 
-    this.model.read_models.forEach( (rm) => {
-      this.applyReadModel(rm, container);
+    this.model.events.forEach((evt) => {
+      this.applyEvent(evt);
+    });
+
+    this.model.read_models.forEach((rm) => {
+      this.applyReadModel(rm);
     });
   }
 
   buildUI(model) {
     const div = document.createElement("div");
     div.setAttribute("id", `ui_${model.uuid}`);
+    div.setAttribute(`data-mel_type`, model.constructor.name);
 
-    let style='';
+    let style = "";
     switch (model.lane) {
-    case 'Interface':
-      style = "background: radial-gradient(#1fe4f5, #3fbafe);"
-      break;
-    case 'Command':
-      style = " background: radial-gradient(#fbc1cc, #fa99b2); ";
-      break;
-    case 'Event':
-      style = " background: radial-gradient(#76b2fe, #b69efe); ";
-      break;
-    case 'ReadModel':
-      style = " background: radial-gradient(#60efbc, #58d5c9); ";
-      break;
-    default:
-      style = "background: radial-gradient(#f588d8, #c0a3e5);"
+      case "Interface":
+        style = "background: radial-gradient(#1fe4f5, #3fbafe);";
+        break;
+      case "Command":
+        style = " background: radial-gradient(#fbc1cc, #fa99b2); ";
+        break;
+      case "Event":
+        style = " background: radial-gradient(#76b2fe, #b69efe); ";
+        break;
+      case "ReadModel":
+        style = " background: radial-gradient(#60efbc, #58d5c9); ";
+        break;
+      default:
+        style = "background: radial-gradient(#f588d8, #c0a3e5);";
     }
-    div.setAttribute("class", 'card');
+    div.setAttribute("class", "card");
     div.setAttribute("style", style);
     div.innerHTML = `
         <a class="card__link" href="#">${model.name} <i class="fas fa-arrow-right"></i></a>
-    `.trim()
+    `.trim();
 
-    return div
+    // perhaps we can place the UI element at this point
+    //this.possitionElement(model);
+
+    return div;
   }
 
-  getLane(model, element) {
-    const lane_name = model.lane
-    let div = document.getElementById(`lane_${lane_name}`)
-    if ( div === null ) {
-        console.log(`LANE: ${lane_name}`);
-      div = document.createElement("div",{"id":`lane_${lane_name}`, "class": "lane"},lane_name);
-      div = document.createElement("div")
-      div.setAttribute("id", `lane_${lane_name}`)
+  getLane(name) {
+    const lane_id = `lane_${name}`;
+    let div = document.getElementById(lane_id);
+    if (div === null) {
+      console.log("LANE:", name);
+      div = document.createElement("div");
+      div.setAttribute("id", lane_id);
       div.setAttribute("class", "lane");
-      div.appendChild(document.createTextNode(lane_name));
-      element.appendChild(div);
+      div.setAttribute(`data-mel_type`, "Lane");
+      div.appendChild(document.createTextNode(name));
+      this.container.appendChild(div);
+      this.bound.add(div);
     }
-    return div
+    return div;
   }
 
-  applyInterface(ui, container) {
-    const element = this.buildUI(ui)
-    const lane = this.getLane(ui, container)
-    lane.appendChild(element)
-    const bind = new Bound(lane); bind.add(element)
+  applyLane(name) {
+    const lane = this.getLane(name);
+    this.container.appendChild(lane);
   }
 
-  applyCommand(command, container) {
-    const element = this.buildUI(command)
-    const lane = this.getLane(command, container)
-    lane.appendChild(element)
-    const bind = new Bound(lane); bind.add(element)
+  applyInterface(ui) {
+    const element = this.buildUI(ui);
+    this.container.appendChild(element);
   }
 
-  applyEvent(event, container) {
-    const element = this.buildUI(event)
-    const lane = this.getLane(event, container)
-    lane.appendChild(element)
-    const bind = new Bound(lane); bind.add(element)
+  applyCommand(command) {
+    const element = this.buildUI(command);
+    this.container.appendChild(element);
   }
 
-  applyReadModel(read_model, container) {
-    const element = this.buildUI(read_model)
-    const lane = this.getLane(read_model, container)
-    lane.appendChild(element)
-    const bind = new Bound(lane); bind.add(element)
+  applyEvent(event) {
+    const element = this.buildUI(event);
+    this.container.appendChild(element);
+  }
+
+  applyReadModel(read_model) {
+    const element = this.buildUI(read_model);
+    this.container.appendChild(element);
   }
 }
