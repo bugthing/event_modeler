@@ -41,24 +41,25 @@ export default class ModelElements {
     div.setAttribute("id", `ui_${model.uuid}`);
     div.setAttribute(`data-mel_type`, model.constructor.name);
 
-    let style = "";
+    let style = "width: 100px;";
     switch (model.lane) {
       case "Interface":
-        style = "background: radial-gradient(#1fe4f5, #3fbafe);";
+        style += "background: radial-gradient(#1fe4f5, #3fbafe);";
         break;
       case "Command":
-        style = " background: radial-gradient(#fbc1cc, #fa99b2); ";
+        style += " background: radial-gradient(#fbc1cc, #fa99b2); ";
         break;
       case "Event":
-        style = " background: radial-gradient(#76b2fe, #b69efe); ";
+        style += " background: radial-gradient(#76b2fe, #b69efe); ";
         break;
       case "ReadModel":
-        style = " background: radial-gradient(#60efbc, #58d5c9); ";
+        style += " background: radial-gradient(#60efbc, #58d5c9); ";
         break;
       default:
-        style = "background: radial-gradient(#f588d8, #c0a3e5);";
+        style += "background: radial-gradient(#f588d8, #c0a3e5);";
     }
     div.setAttribute("class", "card");
+    div.setAttribute("draggable", "true");
     div.setAttribute("style", style);
     div.innerHTML = `
         <a class="card__link" href="#">${model.name} <i class="fas fa-arrow-right"></i></a>
@@ -81,7 +82,7 @@ export default class ModelElements {
       div.setAttribute(`data-mel_type`, "Lane");
       div.appendChild(document.createTextNode(name));
       this.container.appendChild(div);
-      this.bound.add(div);
+      //this.bound.add(div);
     }
     return div;
   }
